@@ -5,7 +5,7 @@
 
 #define TOS_CFG_TASK_PRIO_MAX           10u
 
-#define TOS_CFG_ROUND_ROBIN_EN          1u
+#define TOS_CFG_ROUND_ROBIN_EN          0u
 
 #define TOS_CFG_OBJECT_VERIFY_EN        1u
 
