@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32L431xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Drivers/CMSIS/Include;..\tencentOS-tiny\arch\arm\arm-v7m\common\include;..\tencentOS-tiny\arch\arm\arm-v7m\cortex-m4\armcc;..\tencentOS-tiny\kernel\core\include;..\tencentOS-tiny\kernel\hal\include;..\tencentOS-tiny\osal\cmsis_os;..\tencentOS-tiny\TOS-CONFIG</IncludePath>
+              <IncludePath>../Inc; ../Drivers/STM32L4xx_HAL_Driver/Inc; ../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy; ../Drivers/CMSIS/Device/ST/STM32L4xx/Include; ../Drivers/CMSIS/Include; ..\tencentOS-tiny\arch\arm\arm-v7m\common\include; ..\tencentOS-tiny\arch\arm\arm-v7m\cortex-m4\armcc; ..\tencentOS-tiny\kernel\core\include; ..\tencentOS-tiny\kernel\hal\include; ..\tencentOS-tiny\osal\cmsis_os; ..\tencentOS-tiny\TOS-CONFIG</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

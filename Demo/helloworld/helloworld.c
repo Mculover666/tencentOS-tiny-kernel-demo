@@ -1,3 +1,10 @@
+/********************************************************
+ *@file    helloword.c                                                      
+ *@brief   测试任务是否可以被正常切换运行
+ *@author  Mculover666
+ *@date    2020年7月4日12:27:49
+*********************************************************/
+
 #include <tos_k.h>
 
 k_task_t	task1;
@@ -31,3 +38,17 @@ void application_entry(void *arg)
     
   return;
 }
+
+/********************************************************
+result:
+
+TencentOS-tiny Port on STM32L431RCT6 By Mculover666
+task1 is running...
+task2 is running...
+task1 is running...
+task2 is running...
+task1 is running...
+task2 is running...
+task1 is running...
+task2 is running...
+*********************************************************/

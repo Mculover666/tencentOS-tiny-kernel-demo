@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=F:/MCU/STM32L431RC-BearPi/tencentOS-kernel/Inc
+HeaderPath=F:/MCU/STM32L431RC-EVBMX-Plus/tencentOS-kernel-study/Inc
 HeaderFiles=gpio.h;sys.h;usart.h;stm32l4xx_it.h;stm32l4xx_hal_conf.h;main.h;
-SourcePath=F:/MCU/STM32L431RC-BearPi/tencentOS-kernel/Src
+SourcePath=F:/MCU/STM32L431RC-EVBMX-Plus/tencentOS-kernel-study/Src
 SourceFiles=gpio.c;sys.c;usart.c;stm32l4xx_it.c;stm32l4xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]
