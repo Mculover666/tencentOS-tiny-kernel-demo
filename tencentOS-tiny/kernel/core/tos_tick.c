@@ -43,6 +43,7 @@ __STATIC__ void tick_task_place(k_task_t *task, k_tick_t timeout)
     if (&curr_task->tick_list != &k_tick_list) {
         curr_task->tick_expires -= task->tick_expires;
     }
+    
     tos_list_add_tail(&task->tick_list, &curr_task->tick_list);
 
     TOS_CPU_INT_ENABLE();
