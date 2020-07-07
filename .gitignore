@@ -1,6 +1,6 @@
 #屏蔽MDK-ARM工程打开/编译后自动产生的文件
 MDK-ARM/DebugConfig
 MDK-ARM/RTE
-MDK-ARM/tenentOS-kernel
+MDK-ARM/tencentOS-kernel
 *.lst
 tencentOS-kernel.uvguix.*
