@@ -21,7 +21,7 @@
 __CDECLS_BEGIN
 
 #define K_MMBLK_NEXT_BLK(blk_curr, blk_size)        ((void *)((cpu_addr_t)blk_curr + blk_size))
-#define K_MMBLK_ALIGN_MASK                          (sizeof(void *) - 1u)
+#define K_MMBLK_ALIGN_MASK                          (sizeof(void *))
 
 typedef struct k_mmblk_pool_st {
 #if TOS_CFG_OBJECT_VERIFY_EN > 0u

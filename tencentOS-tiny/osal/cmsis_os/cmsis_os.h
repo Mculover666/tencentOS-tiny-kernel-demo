@@ -142,7 +142,7 @@ used throughout the whole project.
 /// \note MUST REMAIN UNCHANGED: \b osFeature_xxx shall be consistent in every CMSIS-RTOS.
 #define osFeature_MainThread   1       ///< main thread      1=main can be thread, 0=not available
 #define osFeature_Pool         1       ///< Memory Pools:    1=available, 0=not available
-#define osFeature_MailQ        1       ///< Mail Queues:     1=available, 0=not available
+#define osFeature_MailQ        0       ///< Mail Queues:     1=available, 0=not available
 #define osFeature_MessageQ     1       ///< Message Queues:  1=available, 0=not available
 #define osFeature_Signals      0       ///< maximum number of Signal Flags available per thread
 #define osFeature_Semaphore    30       ///< maximum count for \ref osSemaphoreCreate function
@@ -728,8 +728,9 @@ osStatus osPoolFree(osPoolId pool_id, void *block);
 #else                            // define the object
 #define osMessageQDef(name, queue_sz, type)   \
     k_msg_q_t msg_q_handler_##name; \
+    uint8_t msg_q_pool[queue_sz*sizeof(type)]; \
     const osMessageQDef_t os_messageQ_def_##name = \
-        { (queue_sz), sizeof(type), NULL, (&(msg_q_handler_##name)) }
+        { (queue_sz), sizeof(type), msg_q_pool, (&(msg_q_handler_##name)) }
 #endif
 
 /// \brief Access a Message Queue Definition.
