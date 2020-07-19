@@ -60,7 +60,7 @@ void SystemClock_Config(void);
 #define APPLICATION_TASK_STK_SIZE       4096
 
 extern void application_entry(void *arg);
-osThreadDef(application_entry, 1, 1, APPLICATION_TASK_STK_SIZE);
+osThreadDef(application_entry, osPriorityNormal , 1, APPLICATION_TASK_STK_SIZE);
 
 __weak void application_entry(void *arg)
 {
