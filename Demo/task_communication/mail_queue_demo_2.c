@@ -36,7 +36,7 @@ void entry_task_receiver(void *arg)
     size_t mail_size;
 
     while (K_TRUE) {
-        err = tos_mail_q_pend(&mail_q, mailpool, &mail_size, TOS_TIME_FOREVER);
+        err = tos_mail_q_pend(&mail_q, &mail, &mail_size, TOS_TIME_FOREVER);
         if (err == K_ERR_NONE) {
             printf("receiver: msg incoming[%d bytes][%s], payload[%d]\n", mail_size, mail.message, mail.payload);
         }
