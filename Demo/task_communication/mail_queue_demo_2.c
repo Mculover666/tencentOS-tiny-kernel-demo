@@ -81,6 +81,12 @@ void application_entry(void *arg)
 /********************************************************
 result:
 
-<´ý²âÊÔ...>
+TencentOS-tiny Port on STM32L431RCT6 By Mculover666
+sender: post a mail 2
+sender: post a mail 1
+sender: post a mail 0
+receiver: msg incoming[8 bytes][mail 2], payload[2]
+receiver: msg incoming[8 bytes][mail 1], payload[1]
+receiver: msg incoming[8 bytes][mail 0], payload[0]
 
 *********************************************************/
