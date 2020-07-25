@@ -9,9 +9,6 @@
 
 #include <cmsis_os.h>
 
-#define STK_SIZE_TASK1      1024
-osThreadDef(task1_entry, osPriorityNormal, 1, STK_SIZE_TASK1);
-
 typedef struct blk_st {
     int   id;
     char* payload;
@@ -60,6 +57,9 @@ void task1_entry(void *arg)
         tos_task_delay(1000);
     }
 }
+
+#define STK_SIZE_TASK1      1024
+osThreadDef(task1_entry, osPriorityNormal, 1, STK_SIZE_TASK1);
 
 void application_entry(void *arg)
 {
