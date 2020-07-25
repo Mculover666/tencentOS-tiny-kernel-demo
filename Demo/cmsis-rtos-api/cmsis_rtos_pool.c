@@ -83,7 +83,6 @@ void application_entry(void *arg)
 result:
 
 TencentOS-tiny Port on STM32L431RCT6 By Mculover666
-item size = 8 bytes, create ret = 0
 mmblk pool create success
 block size is 8 bytes
 a mmblk alloc success
