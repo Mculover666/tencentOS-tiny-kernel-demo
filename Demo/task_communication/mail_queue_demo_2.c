@@ -39,6 +39,7 @@ void entry_task_receiver(void *arg)
         err = tos_mail_q_pend(&mail_q, &mail, &mail_size, TOS_TIME_FOREVER);
         if (err == K_ERR_NONE) {
             printf("receiver: msg incoming[%d bytes][%s], payload[%d]\n", mail_size, mail.message, mail.payload);
+            printf("mail addr:[0x%08x]  mail content: message[0x%08x] payload = [%d]\r\n\r\n", &mail, mail.message, mail.payload);
         }
     }
 }
@@ -50,16 +51,19 @@ void entry_task_sender(void *arg)
     printf("sender: post a mail 2\n");
     mail_2.message = "mail 2";
     mail_2.payload = 2;
+    printf("mail2 addr:[0x%08x]  mail content: message[0x%08x] payload = [%d]\r\n\r\n", &mail_2, mail_2.message, mail_2.payload);
     tos_mail_q_post(&mail_q, &mail_2, sizeof(mail_t));
 
     printf("sender: post a mail 1\n");
     mail_1.message = "mail 1";
     mail_1.payload = 1;
+    printf("mail1 addr:[0x%08x]  mail content: message[0x%08x] payload = [%d]\r\n\r\n", &mail_1, mail_1.message, mail_1.payload);
     tos_mail_q_post_all(&mail_q, &mail_1, sizeof(mail_t));
 
     printf("sender: post a mail 0\n");
     mail_0.message = "mail 0";
     mail_0.payload = 0;
+    printf("mail0 addr:[0x%08x]  mail content: message[0x%08x] payload = [%d]\r\n\r\n", &mail_0, mail_0.message, mail_0.payload);
     tos_mail_q_post(&mail_q, &mail_0, sizeof(mail_t));
 }
 
@@ -83,10 +87,21 @@ result:
 
 TencentOS-tiny Port on STM32L431RCT6 By Mculover666
 sender: post a mail 2
+mail2 addr:[0x20001560]  mail content: message[0x080029f4] payload = [2]
+
 sender: post a mail 1
+mail1 addr:[0x20001558]  mail content: message[0x08002a1c] payload = [1]
+
 sender: post a mail 0
+mail0 addr:[0x20001550]  mail content: message[0x08002a40] payload = [0]
+
 receiver: msg incoming[8 bytes][mail 2], payload[2]
+mail addr:[0x20001364]  mail content: message[0x080029f4] payload = [2]
+
 receiver: msg incoming[8 bytes][mail 1], payload[1]
+mail addr:[0x20001364]  mail content: message[0x08002a1c] payload = [1]
+
 receiver: msg incoming[8 bytes][mail 0], payload[0]
+mail addr:[0x20001364]  mail content: message[0x08002a40] payload = [0]
 
 *********************************************************/
