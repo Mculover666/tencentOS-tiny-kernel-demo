@@ -763,6 +763,11 @@
               </FileOption>
             </File>
             <File>
+              <FileName>task_demo_4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Demo\task\task_demo_4.c</FilePath>
+            </File>
+            <File>
               <FileName>irq_demo_1.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Demo\irq\irq_demo_1.c</FilePath>
