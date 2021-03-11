@@ -25,8 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "cmsis_os.h"
-
+#include "tos_k.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,10 +56,14 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 #define APPLICATION_TASK_STK_SIZE       4096
+#define APPLICATION_TASK_PRIO           1
+
+k_task_t application_task;
+k_stack_t application_task_stack[APPLICATION_TASK_STK_SIZE];
 
 extern void application_entry(void *arg);
-osThreadDef(application_entry, osPriorityNormal , 1, APPLICATION_TASK_STK_SIZE);
 
 __weak void application_entry(void *arg)
 {
@@ -109,7 +112,8 @@ int main(void)
   tos_knl_init();
   
   //创建任务
-    osThreadCreate(osThread(application_entry), NULL); // Create TOS Tiny task
+   tos_task_create(&application_task, "application_task", application_entry, NULL, 
+                    APPLICATION_TASK_PRIO, application_task_stack, APPLICATION_TASK_STK_SIZE, 10);
   
   //启动内核
   tos_knl_start();
