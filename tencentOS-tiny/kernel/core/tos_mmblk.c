@@ -50,6 +50,8 @@ __API__ k_err_t tos_mmblk_pool_create(k_mmblk_pool_t *mbp, void *pool_start, siz
     mbp->blk_size   = blk_size;
 
     TOS_OBJ_INIT(mbp, KNL_OBJ_TYPE_MMBLK_POOL);
+    
+    knl_object_alloc_set_static(&mbp->knl_obj);
 
     return K_ERR_NONE;
 }
