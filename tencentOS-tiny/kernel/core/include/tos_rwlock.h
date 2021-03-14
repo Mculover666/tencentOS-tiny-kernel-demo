@@ -25,9 +25,7 @@ __CDECLS_BEGIN
 typedef uint16_t    rw_cnt_t;
 
 typedef struct k_rwlock_st {
-#if TOS_CFG_OBJECT_VERIFY_EN > 0u
     knl_obj_t       knl_obj;
-#endif
 
     k_mutex_t       lock;
     k_sem_t         signal;
@@ -69,6 +67,7 @@ __API__ k_err_t tos_rwlock_destroy(k_rwlock_t *rwlock);
  *              and no writers can hold the write-lock.
  *
  * @param[in]   rwlock              the read-write lock.
+ * @param[in]   timeout             how much time(in k_tick_t) we would like to wait.
  *
  * @return  errcode
  * @retval  #K_ERR_NONE                     return successfully.
@@ -110,6 +109,7 @@ __API__ k_err_t tos_rwlock_rpend_try(k_rwlock_t *rwlock);
  *              and no readers can hold the read-lock.
  *
  * @param[in]   rwlock              the read-write lock.
+ * @param[in]   timeout             how much time(in k_tick_t) we would like to wait.
  *
  * @return  errcode
  * @retval  #K_ERR_NONE                             return successfully.

@@ -20,12 +20,12 @@
 
 __CDECLS_BEGIN
 
+#if TOS_CFG_COMPLETION_EN > 0
+
 typedef uint16_t    completion_done_t;
 
 typedef struct k_completion_st {
-#if TOS_CFG_OBJECT_VERIFY_EN > 0u
     knl_obj_t           knl_obj;
-#endif
 
     pend_obj_t          pend_obj;
     completion_done_t   done;
@@ -83,7 +83,6 @@ __API__ k_err_t tos_completion_pend_timed(k_completion_t *completion, k_tick_t t
  * @attention None
  *
  * @param[in]   completion  pointer to the handler of the completion.
- * @param[in]   timeout     how much time(in k_tick_t) we would like to wait.
  *
  * @return  errcode
  * @retval  #K_ERR_PEND_SCHED_LOCKED          we can wait, but scheduler is locked.
@@ -146,6 +145,8 @@ __API__ k_err_t tos_completion_reset(k_completion_t *completion);
  * @retval  K_FALSE         the completion is not done.
  */
 __API__ int tos_completion_is_done(k_completion_t *completion);
+
+#endif /* TOS_CFG_COMPLETION_EN */
 
 __CDECLS_END
 

@@ -21,9 +21,7 @@
 typedef uint32_t                        k_bmtbl_t;
 
 typedef struct k_bitmap_st {
-#if TOS_CFG_OBJECT_VERIFY_EN > 0u
     knl_obj_t       knl_obj;
-#endif
 
     uint32_t        bit_ndx_max;
     uint32_t        bit_max;
@@ -145,7 +143,6 @@ __API__ int         tos_bitmap_is_reset(k_bitmap_t *bitmap, uint32_t bit);
  * @attention The very first bit which is set to 1.
  *
  * @param[in]   bitmap          pointer to the handler of the bitmap.
- * @param[in]   bit             the bit to set.
  *
  * @return  the lowest significant bit of the bitmap.
  */
