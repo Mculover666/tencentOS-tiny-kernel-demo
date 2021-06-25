@@ -9,7 +9,18 @@
 
 如果开发板不同，则需要先有一个移植了TencentOS-tiny的基础工程，Demo文件的代码都是通用的。
 
-# 3. 交流
+# 3. 配套教程
+
+- [RTOS内功修炼记（一）—— 任务到底应该怎么写？
+- [RTOS内功修炼记（二）—— 优先级抢占调度到底是怎么回事？](http://www.mculover666.cn/posts/3835893929/)
+- [RTOS内功修炼记（三）—— 内核到底是如何管理中断的？](http://www.mculover666.cn/posts/199163223/)
+- [RTOS内功修炼记（四）—— 小小的时钟节拍，撑起了内核半边天！](http://www.mculover666.cn/posts/2848765993/)
+- [RTOS内功修炼记（五）—— 任务间同步机制的实现，万变不离其宗！](http://www.mculover666.cn/posts/2361665440/)
+- [RTOS内功修炼记（六）—— 任务间通信为什么不用全局变量？](http://www.mculover666.cn/posts/349211769/)
+- [RTOS内功修炼记（七）—— 动态内存和静态内存管理机制](http://www.mculover666.cn/posts/1391422127/)
+- [RTOS内功修炼记（八）—— CMSIS RTOS API用法详解及示例](http://www.mculover666.cn/posts/2358419088/)
+
+# 4. 交流
 
 个人微信公众号：Mculover666
 
