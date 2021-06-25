@@ -11,7 +11,7 @@
 
 # 3. 配套教程
 
-- [RTOS内功修炼记（一）—— 任务到底应该怎么写？
+- [RTOS内功修炼记（一）—— 任务到底应该怎么写？](http://www.mculover666.cn/posts/2730530468/)
 - [RTOS内功修炼记（二）—— 优先级抢占调度到底是怎么回事？](http://www.mculover666.cn/posts/3835893929/)
 - [RTOS内功修炼记（三）—— 内核到底是如何管理中断的？](http://www.mculover666.cn/posts/199163223/)
 - [RTOS内功修炼记（四）—— 小小的时钟节拍，撑起了内核半边天！](http://www.mculover666.cn/posts/2848765993/)
