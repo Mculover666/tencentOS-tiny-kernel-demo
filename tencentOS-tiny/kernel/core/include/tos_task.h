@@ -429,6 +429,8 @@ __DEBUG__ __STATIC_INLINE__ void task_default_walker(k_task_t *task)
         state_str = "SLEEP";
     } else if (task->state == K_TASK_STATE_READY) {
         state_str = "READY";
+    } else if (task->state == K_TASK_STATE_DELETED ) {
+        state_str = "DELETED";
     }
     tos_kprintln("tsk stat: %s", state_str);
 
