@@ -233,6 +233,23 @@ void USART1_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+/**
+ * @brief	EXIT中断回调函数
+ * @param GPIO_Pin —— 触发中断的引脚
+ * @retval	none
+*/
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	switch(GPIO_Pin)
+	{
+		case GPIO_PIN_2:
+            printf("KEY 1 press!\r\n");
+            tos_task_info_display();
+			break;
+		default:
+			break;
+	}
+}
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
