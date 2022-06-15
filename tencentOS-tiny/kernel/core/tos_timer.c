@@ -136,6 +136,10 @@ __API__ k_err_t tos_timer_create(k_timer_t *tmr,
 
     TOS_OBJ_INIT(tmr, KNL_OBJ_TYPE_TIMER);
 
+#if TOS_CFG_OBJ_DYNAMIC_CREATE_EN > 0u
+    knl_object_alloc_set_static(&tmr->knl_obj);
+#endif
+
     return K_ERR_NONE;
 }
 
@@ -143,6 +147,12 @@ __API__ k_err_t tos_timer_destroy(k_timer_t *tmr)
 {
     TOS_PTR_SANITY_CHECK(tmr);
     TOS_OBJ_VERIFY(tmr, KNL_OBJ_TYPE_TIMER);
+
+#if TOS_CFG_OBJ_DYNAMIC_CREATE_EN > 0u
+    if (!knl_object_alloc_is_static(&tmr->knl_obj)) {
+        return K_ERR_OBJ_INVALID_ALLOC_TYPE;
+    }
+#endif
 
     if (tmr->state == TIMER_STATE_UNUSED) {
         return K_ERR_TIMER_INACTIVE;
@@ -153,8 +163,72 @@ __API__ k_err_t tos_timer_destroy(k_timer_t *tmr)
     }
 
     timer_reset(tmr);
+
+#if TOS_CFG_OBJ_DYNAMIC_CREATE_EN > 0u
+    knl_object_alloc_reset(&tmr->knl_obj);
+#endif
+
     return K_ERR_NONE;
 }
+
+#if TOS_CFG_OBJ_DYNAMIC_CREATE_EN > 0u
+
+__API__ k_err_t tos_timer_create_dyn(k_timer_t **tmr,
+                                        k_tick_t delay,
+                                        k_tick_t period,
+                                        k_timer_callback_t callback,
+                                        void *cb_arg,
+                                        k_opt_t opt)
+{
+    k_err_t err;
+    k_timer_t *the_timer;
+
+    TOS_PTR_SANITY_CHECK(tmr);
+    TOS_PTR_SANITY_CHECK(callback);
+
+    the_timer = tos_mmheap_calloc(1, sizeof(k_timer_t));
+    if (!the_timer) {
+        return K_ERR_OUT_OF_MEMORY;
+    }
+
+    err = tos_timer_create(the_timer, delay, period, callback, cb_arg, opt);
+    if (err != K_ERR_NONE) {
+        tos_mmheap_free(the_timer);
+        return err;
+    }
+
+    knl_object_alloc_set_dynamic(&the_timer->knl_obj);
+
+    *tmr = the_timer;
+
+    return K_ERR_NONE;
+}
+
+__API__ k_err_t tos_timer_destroy_dyn(k_timer_t *tmr)
+{
+    TOS_PTR_SANITY_CHECK(tmr);
+    TOS_OBJ_VERIFY(tmr, KNL_OBJ_TYPE_TIMER);
+
+    if (!knl_object_alloc_is_dynamic(&tmr->knl_obj)) {
+        return K_ERR_OBJ_INVALID_ALLOC_TYPE;
+    }
+
+    if (tmr->state == TIMER_STATE_UNUSED) {
+        return K_ERR_TIMER_INACTIVE;
+    }
+
+    if (tmr->state == TIMER_STATE_RUNNING) {
+        timer_takeoff(tmr);
+    }
+
+    timer_reset(tmr);
+
+    tos_mmheap_free(tmr);
+
+    return K_ERR_NONE;
+}
+
+#endif
 
 __API__ k_err_t tos_timer_start(k_timer_t *tmr)
 {
@@ -253,7 +327,7 @@ __API__ k_err_t tos_timer_period_change(k_timer_t *tmr, k_tick_t period)
     return timer_change(tmr, period, TIMER_CHANGE_TYPE_PERIOD);
 }
 
-__KNL__ k_tick_t timer_next_expires_get(void)
+__KNL__ k_tick_t soft_timer_next_expires_get(void)
 {
     TOS_CPU_CPSR_ALLOC();
     k_tick_t next_expires;
@@ -274,7 +348,7 @@ __KNL__ k_tick_t timer_next_expires_get(void)
 
 #if TOS_CFG_TIMER_AS_PROC > 0u
 
-__KNL__ void timer_update(void)
+__KNL__ void soft_timer_update(void)
 {
     k_timer_t *tmr, *tmp;
 
@@ -314,7 +388,7 @@ __STATIC__ void timer_task_entry(void *arg)
 
     arg = arg; // make compiler happy
     while (K_TRUE) {
-        next_expires = timer_next_expires_get();
+        next_expires = soft_timer_next_expires_get();
         if (next_expires == TOS_TIME_FOREVER) {
             tos_task_suspend(K_NULL);
         } else if (next_expires > (k_tick_t)0u) {
@@ -347,13 +421,13 @@ __STATIC__ void timer_task_entry(void *arg)
 
 #endif
 
-__KNL__ k_err_t timer_init(void)
+__KNL__ k_err_t soft_timer_init(void)
 {
 #if TOS_CFG_TIMER_AS_PROC > 0u
     return K_ERR_NONE;
 #else
     return tos_task_create(&k_timer_task,
-            "timer",
+            "soft_timer",
             timer_task_entry,
             K_NULL,
             k_timer_task_prio,

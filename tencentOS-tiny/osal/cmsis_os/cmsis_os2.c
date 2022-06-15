@@ -156,7 +156,7 @@ osThreadId_t osThreadNew(osThreadFunc_t func,
   k_err_t err;
   uint32_t stack_size = K_TASK_STK_SIZE_MIN;
   k_task_t* taskId = NULL;
-  k_prio_t prio;
+  k_prio_t prio = osPriorityNormal;
 
   if (attr && func) {
     if (attr->priority != osPriorityNone) {
@@ -778,11 +778,11 @@ uint32_t osMemoryPoolGetSpace(osMemoryPoolId_t mp_id) {
 osStatus_t osMemoryPoolDelete(osMemoryPoolId_t mp_id) {
   k_mmblk_pool_t* mpId = (k_mmblk_pool_t*)mp_id;
     
-    if (knl_object_alloc_is_dynamic(&mpId->knl_obj)) {
-        return errno_knl2cmsis(tos_mmblk_pool_destroy_dyn(mpId));
-    } else {
-        return errno_knl2cmsis(tos_mmblk_pool_destroy(mpId));
-    }
+  if (knl_object_alloc_is_dynamic(&mpId->knl_obj)) {
+    return errno_knl2cmsis(tos_mmblk_pool_destroy_dyn(mpId));
+  } else {
+    return errno_knl2cmsis(tos_mmblk_pool_destroy(mpId));
+  }
 }
 
 /*---------------------------------------------------------------------------*/

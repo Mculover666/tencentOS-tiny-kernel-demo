@@ -1,3 +1,20 @@
+/*----------------------------------------------------------------------------
+ * Tencent is pleased to support the open source community by making TencentOS
+ * available.
+ *
+ * Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
+ * If you have downloaded a copy of the TencentOS binary from Tencent, please
+ * note that the TencentOS binary is licensed under the BSD 3-Clause License.
+ *
+ * If you have downloaded a copy of the TencentOS source code from Tencent,
+ * please note that TencentOS source code is licensed under the BSD 3-Clause
+ * License, except for the third-party components listed below which are
+ * subject to different license terms. Your integration of TencentOS into your
+ * own projects may require compliance with the BSD 3-Clause License, as well
+ * as the other licenses applicable to the third-party components included
+ * within TencentOS.
+ *---------------------------------------------------------------------------*/
+
 #include "tos_k.h"
 #include "core_cm0.h"
 
@@ -76,43 +93,28 @@ __PORT__ void port_standby_mode_enter(void)
 #endif
 
 #if TOS_CFG_FAULT_BACKTRACE_EN > 0u
+
 __PORT__ void port_fault_diagnosis(void)
 {
-    k_fault_log_writer("fault diagnosis does not supported in CORTEX M0\n");
+    k_fault_log_writer("fault diagnosis is not supported in CORTEX M0\n");
 }
-
-/*------------------ RealView Compiler -----------------*/
-/* V5 */
-#if defined(__CC_ARM)
-
-__PORT__ __ASM__ void HardFault_Handler(void)
-{
-    IMPORT  fault_backtrace
-
-    MOV     r0, lr
-    TST     lr, #0x04
-    ITE     EQ
-    MRSEQ   r1, MSP
-    MRSNE   r1, PSP
-    BL      fault_backtrace
-}
-
-/*------------------ ARM Compiler V6 -------------------*/
-#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 
 __PORT__ void __NAKED__ HardFault_Handler(void)
 {
     __ASM__ __VOLATILE__ (
         "MOV     r0, lr\n\t"
-        "TST     lr, #0x04\n\t"
-        "ITE     EQ\n\t"
-        "MRSEQ   r1, MSP\n\t"
-        "MRSNE   r1, PSP\n\t"
-        "BL      fault_backtrace\n\t"
+        "MOVS    r1, #0x04\n\t"
+        "TST     r0, r1\n\t"
+        "BEQ     _LD_MSP\n\t"
+        "MRS     r1, PSP\n\t"
+        "B       _EXIT\n"
+        "_LD_MSP:\n\t"
+        "MRS     r1, MSP\n"
+        "_EXIT:\n\t"
+        "LDR     r2, =fault_backtrace\n\t"
+        "BX      r2\n\t"
     );
 }
-
-#endif /* ARMCC VERSION */
 
 #endif /* TOS_CFG_FAULT_BACKTRACE_EN */
 

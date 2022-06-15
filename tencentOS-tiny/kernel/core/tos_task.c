@@ -19,7 +19,7 @@
 
 __STATIC_INLINE__ void task_reset(k_task_t *task)
 {
-#if TOS_CFG_TASK_DYNAMIC_CREATE_EN > 0u
+#if TOS_CFG_OBJ_DYNAMIC_CREATE_EN > 0u
     knl_object_alloc_reset(&task->knl_obj);
 
     tos_list_init(&task->dead_list);
@@ -80,7 +80,7 @@ __STATIC__ void task_mutex_release(k_task_t *task)
 #endif
 
 __API__ k_err_t tos_task_create(k_task_t *task,
-                                            char *name,
+                                            const char *name,
                                             k_task_entry_t entry,
                                             void *arg,
                                             k_prio_t prio,
@@ -115,7 +115,7 @@ __API__ k_err_t tos_task_create(k_task_t *task,
     tos_list_add(&task->stat_list, &k_stat_list);
 
     TOS_OBJ_INIT(task, KNL_OBJ_TYPE_TASK);
-#if TOS_CFG_TASK_DYNAMIC_CREATE_EN > 0u
+#if TOS_CFG_OBJ_DYNAMIC_CREATE_EN > 0u
     knl_object_alloc_set_static(&task->knl_obj);
 #endif
 
@@ -125,7 +125,7 @@ __API__ k_err_t tos_task_create(k_task_t *task,
     task->prio      = prio;
     task->stk_base  = stk_base;
     task->stk_size  = stk_size;
-    strncpy(task->name, name, K_TASK_NAME_MAX);
+    strncpy(task->name, name, K_TASK_NAME_LEN_MAX);
 
 #if TOS_CFG_ROUND_ROBIN_EN > 0u
     task->timeslice_reload = timeslice;
@@ -187,9 +187,21 @@ __STATIC__ k_err_t task_do_destroy(k_task_t *task)
     return K_ERR_NONE;
 }
 
-__STATIC__ k_err_t task_destroy_static(k_task_t *task)
+__API__ k_err_t tos_task_destroy(k_task_t *task)
 {
-#if TOS_CFG_TASK_DYNAMIC_CREATE_EN > 0u
+    TOS_IN_IRQ_CHECK();
+
+    if (unlikely(!task)) {
+        task = k_curr_task;
+    }
+
+    TOS_OBJ_VERIFY(task, KNL_OBJ_TYPE_TASK);
+
+    if (knl_is_self(task) && knl_is_sched_locked()) {
+        return K_ERR_SCHED_LOCKED;
+    }
+
+#if TOS_CFG_OBJ_DYNAMIC_CREATE_EN > 0u
     if (!knl_object_alloc_is_static(&task->knl_obj)) {
         return K_ERR_OBJ_INVALID_ALLOC_TYPE;
     }
@@ -198,7 +210,7 @@ __STATIC__ k_err_t task_destroy_static(k_task_t *task)
     return task_do_destroy(task);
 }
 
-#if TOS_CFG_TASK_DYNAMIC_CREATE_EN > 0u
+#if TOS_CFG_OBJ_DYNAMIC_CREATE_EN > 0u
 
 __STATIC__ void task_free(k_task_t *task)
 {
@@ -222,7 +234,7 @@ __KNL__ void task_free_all(void)
 }
 
 __API__ k_err_t tos_task_create_dyn(k_task_t **task,
-                                                    char *name,
+                                                    const char *name,
                                                     k_task_entry_t entry,
                                                     void *arg,
                                                     k_prio_t prio,
@@ -238,27 +250,15 @@ __API__ k_err_t tos_task_create_dyn(k_task_t **task,
     TOS_PTR_SANITY_CHECK(task);
     TOS_PTR_SANITY_CHECK(entry);
 
-    if (unlikely(stk_size < sizeof(cpu_context_t))) {
-        return K_ERR_TASK_STK_SIZE_INVALID;
-    }
-
-    if (unlikely(prio == K_TASK_PRIO_IDLE)) {
-        return K_ERR_TASK_PRIO_INVALID;
-    }
-
-    if (unlikely(prio > K_TASK_PRIO_IDLE)) {
-        return K_ERR_TASK_PRIO_INVALID;
-    }
-
     the_task = tos_mmheap_calloc(1, sizeof(k_task_t));
     if (!the_task) {
-        return K_ERR_TASK_OUT_OF_MEMORY;
+        return K_ERR_OUT_OF_MEMORY;
     }
 
     stk_base = tos_mmheap_alloc(stk_size);
     if (!stk_base) {
         tos_mmheap_free(the_task);
-        return K_ERR_TASK_OUT_OF_MEMORY;
+        return K_ERR_OUT_OF_MEMORY;
     }
 
     the_task->stk_base = stk_base;
@@ -275,9 +275,25 @@ __API__ k_err_t tos_task_create_dyn(k_task_t **task,
     return K_ERR_NONE;
 }
 
-__STATIC__ k_err_t task_destroy_dyn(k_task_t *task)
+__API__ k_err_t tos_task_destroy_dyn(k_task_t *task)
 {
     k_err_t err;
+
+    TOS_IN_IRQ_CHECK();
+
+    if (unlikely(!task)) {
+        task = k_curr_task;
+    }
+
+    TOS_OBJ_VERIFY(task, KNL_OBJ_TYPE_TASK);
+
+    if (knl_is_self(task) && knl_is_sched_locked()) {
+        return K_ERR_SCHED_LOCKED;
+    }
+
+    if (!knl_object_alloc_is_dynamic(&task->knl_obj)) {
+        return K_ERR_OBJ_INVALID_ALLOC_TYPE;
+    }
 
     tos_knl_sched_lock();
 
@@ -301,29 +317,6 @@ __STATIC__ k_err_t task_destroy_dyn(k_task_t *task)
 }
 
 #endif
-
-__API__ k_err_t tos_task_destroy(k_task_t *task)
-{
-    TOS_IN_IRQ_CHECK();
-
-    if (unlikely(!task)) {
-        task = k_curr_task;
-    }
-
-    TOS_OBJ_VERIFY(task, KNL_OBJ_TYPE_TASK);
-
-    if (knl_is_self(task) && knl_is_sched_locked()) {
-        return K_ERR_SCHED_LOCKED;
-    }
-
-#if TOS_CFG_TASK_DYNAMIC_CREATE_EN > 0u
-    if (knl_object_alloc_is_dynamic(&task->knl_obj)) {
-        return task_destroy_dyn(task);
-    }
-#endif
-
-    return task_destroy_static(task);
-}
 
 __API__ void tos_task_yield(void)
 {
@@ -423,6 +416,12 @@ __API__ k_err_t tos_task_suspend(k_task_t *task)
 
     if (task_state_is_ready(task)) { // kill the good kid
         readyqueue_remove(task);
+    }
+    if (task_state_is_pending(task)) {
+        pend_list_remove(task);
+    }
+    if (task_state_is_sleeping(task)) {
+        tick_list_remove(task);
     }
     task_state_set_suspended(task);
 
@@ -534,6 +533,28 @@ __API__ k_task_t *tos_task_curr_task_get(void)
     TOS_CPU_INT_ENABLE();
 
     return curr_task;
+}
+
+__API__ k_task_t *tos_task_find(const char *name)
+{
+    TOS_CPU_CPSR_ALLOC();
+    k_task_t *task;
+
+    if (!strlen(name)) {
+        return K_NULL;
+    }
+
+    TOS_CPU_INT_DISABLE();
+
+    TOS_LIST_FOR_EACH_ENTRY(task, k_task_t, stat_list, &k_stat_list) {
+        if (strncmp(task->name, name, K_TASK_NAME_LEN_MAX) == 0) {
+            TOS_CPU_INT_ENABLE();
+            return task;
+        }
+    }
+
+    TOS_CPU_INT_ENABLE();
+    return K_NULL;
 }
 
 __API__ void tos_task_walkthru(k_task_walker_t walker)

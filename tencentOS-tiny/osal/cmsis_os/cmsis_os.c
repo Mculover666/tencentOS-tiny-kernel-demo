@@ -112,17 +112,6 @@ osStatus osThreadTerminate(osThreadId thread_id)
 }
 
 /**
- * @brief Pass control to next thread that is in state READY.
- * @return status code that indicates the execution status of the function.
- */
-osStatus osThreadYield(void)
-{
-    tos_task_yield();
-    
-    return osOK;
-}
-
-/**
  * @brief Change priority of an active thread.
  * @param[in]   thread_id   thread ID obtained by \ref osThreadCreate or \ref osThreadGetId.
  * @param[in]   priority    new priority value for the thread function.
@@ -131,6 +120,17 @@ osStatus osThreadYield(void)
 osStatus osThreadSetPriority(osThreadId thread_id, osPriority priority)
 {
     return errno_knl2cmsis(tos_task_prio_change((k_task_t *)thread_id, priority_cmsis2knl(priority)));
+}
+
+/**
+ * @brief Pass control to next thread that is in state READY.
+ * @return status code that indicates the execution status of the function.
+ */
+osStatus osThreadYield(void)
+{
+    tos_task_yield();
+    
+    return osOK;
 }
 
 /**
@@ -386,8 +386,6 @@ osPoolId osPoolCreate(const osPoolDef_t *pool_def)
 
     err = tos_mmblk_pool_create((k_mmblk_pool_t *)pool_def->mmblk_pool,
                                     pool_def->pool, pool_def->pool_sz, pool_def->item_sz);
-    
-    tos_kprintf("item size = %d bytes, create ret = %d\r\n", pool_def->item_sz, err);
     return err == K_ERR_NONE ? pool_def->mmblk_pool : NULL;
 }
 
